@@ -1,63 +1,43 @@
-// Create Web Server
-// npm init
-// npm install express --save
-// npm install body-parser --save
-// npm install multer --save
-// npm install mysql --save
-// npm install cors --save
-// npm install express-session --save
-// npm install ejs --save
-// npm install nodemon --save-dev
-// npm install bcrypt --save
-// npm install passport --save
-// npm install passport-local --save
-// npm install passport-local-mysql --save
-// npm install express-mysql-session --save
-// npm install connect-flash --save
-// npm install express-validator --save
-// npm install moment --save
-// npm install socket.io --save
-// npm install socket.io-client --save
-// npm install jquery --save
-// npm install bootstrap --save
-// npm install popper.js --save
-// npm install axios --save
-// npm install dotenv --save
-// npm install nodemailer --save
-// npm install nodemailer-smtp-transport --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
-// npm install aws-sdk --save
-// npm install cookie-parser --save
-// npm install express-session --save
-// npm install express-session --save
-// npm install multer-s3 --save
+//Create web server
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+//connect to mongodb
+mongoose.connect('mongodb://localhost/comments');
+//create a schema
+var commentSchema = new mongoose.Schema({
+	name: String,
+	comment: String,
+	created_at: {type: Date, default: Date.now}
+});
+//create a model
+var Comment = mongoose.model('Comment', commentSchema);
+//configure app
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
+//setup routes
+app.get('/', function(req, res){
+	res.render('index');
+});
+app.post('/create', function(req, res){
+	Comment.create(req.body, function(err, comment){
+		if(err){
+			console.log(err);
+		}else{
+			res.redirect('/comments');
+		}
+	});
+});
+app.get('/comments', function(req, res){
+	Comment.find({}, function(err, comments){
+		if(err){
+			console.log(err);
+		}else{
+			res.render('comments', {comments: comments});
+		}
+	});
+});
+app.listen(3000, function(){
+	console.log('Server is running on port 3000');
+});
